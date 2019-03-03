@@ -10,8 +10,7 @@ class WeatherSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, obj):
         return {
             str(obj.measured_at.strftime("%Y-%m")): obj.value
-                }
-        # fields = ('value', 'year', 'month')
+        }
 
 
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
