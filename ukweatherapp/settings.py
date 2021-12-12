@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,10 +23,16 @@ FIXTURE_DIRS = (
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'bm+cak70+8m4y8(s9t^x_q_6_i==)uqo374-560w46b_bok3y7'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+if os.environ.get('PROD'):
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+    DEBUG = False
+    load_dotenv('production.env')
+else:
+    SECRET_KEY = 'bm+cak70+8m4y8(s9t^x_q_6_i==)uqo374-560w46b_bok3y7'
+    DEBUG = True
+    load_dotenv('dev.env')
 
 ALLOWED_HOSTS = []
 
@@ -84,16 +91,28 @@ WSGI_APPLICATION = 'ukweatherapp.wsgi.application'
 #     }
 # }
 
+
+
+CONFIG = {
+    'db_name': os.environ.get('DB_NAME'),
+    'db_username': os.environ.get('DB_USERNAME'),
+    'db_password': os.environ.get('DB_PASSWORD'),
+    'db_host': os.environ.get('DB_HOST'),
+    'db_port': os.environ.get('DB_PORT'),
+    'test_db_name': os.environ.get('TEST_DB_NAME')
+}
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ukweather',
-        'USER': 'cyber',
-        'PASSWORD': '123cyber',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': CONFIG['db_name'],
+        'USER': CONFIG['db_username'],
+        'PASSWORD': CONFIG['db_password'],
+        'HOST': CONFIG['db_host'],
+        'PORT': CONFIG['db_port'],
         'TEST': {
-           'NAME': 'test_ukweather',
+           'NAME': CONFIG['test_db_name'],
         }
     }
 }

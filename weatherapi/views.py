@@ -1,6 +1,5 @@
 import datetime
 # from django.shortcuts import render
-from django.db.models import FieldDoesNotExist, ObjectDoesNotExist
 from .models import Location, Weather, Metric
 from .serializers import WeatherSerializer
 from rest_framework import viewsets
@@ -67,10 +66,10 @@ class WeatherViewSet(viewsets.ModelViewSet):
             l = Location.objects.get(name=location)
             m = Metric.objects.get(name=metric)
 
-        except FieldDoesNotExist as e:
+        except Location.DoesNotExist as e:
             return None
 
-        except ObjectDoesNotExist as e:
+        except Metric.DoesNotExist as e:
             return None
 
         return queryset.filter(

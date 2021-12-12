@@ -5,11 +5,30 @@
 import requests
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+import io
+import csv
+import pandas as pd
 
 from ...models import Location, Metric, Weather
 
 
 class Command(BaseCommand):
+ 
+    def get_data(self, url):
+        response = requests.get(url).content.decode('ascii')
+        f = io.StringIO(response)
+        rows = []
+        for i, line in enumerate(f.readlines()):
+            if i >= 5:
+                rows.append(line.split())
+        
+        f = io.StringIO()
+        writer = csv.writer(f, delimiter=",")
+        writer.writerows(rows)
+
+        df = pd.read_csv('temp_file.csv')
+        return df
+
 
     @staticmethod
     def seed_locations():
@@ -58,19 +77,44 @@ class Command(BaseCommand):
         locations = Location.objects.all()
         metrics = Metric.objects.all()
 
-        url = '''https://s3.eu-west-2.amazonaws.com/interview-question-data/metoffice/{}-{}.json'''
+        month_to_MM = {
+            'jan': 1,
+            'feb': 2,
+            'mar': 3,
+            'apr': 4,
+            'may': 5,
+            'jun': 6,
+            'jul': 7,
+            'aug': 8,
+            'sep': 9,
+            'oct': 10,
+            'nov': 11,
+            'dec': 12,
+        }
+       
 
         instances = []
         for location in locations:
-            for m in metrics:
-                results = requests.get(url.format(m.name, location.name))
-                for result in results.json():
-                    instances.append(
-                        Weather(measured_at='{}-{}-01'.format(result['year'],
-                                                              result['month']),
-                                value=float(result['value']),
-                                metric=m,
-                                location=location))
+            for metric in metrics:
+                url = f"https://www.metoffice.gov.uk/pub/data/weather/uk/climate/datasets/{metric.name}/date/{location.name}.txt"
+                results = self.get_data(url)
+                for _, value in results.iterrows():
+                    year = value['year']
+                    for month in results.columns[1:13]:
+                        mm = month_to_MM[month]
+                        try:
+                            float(value[month])
+                            instances.append(
+                                Weather(
+                                    measured_at='{}-{}-01'.format(year, mm),
+                                    value=float(value[month]),
+                                    metric=metric,
+                                    location=location
+                                )
+                            )
+                        except ValueError as e:
+                            pass
+                        
         self.stdout.write(
             self.style.SUCCESS('Successfully migrated all weather data'))
         Weather.objects.bulk_create(instances)
