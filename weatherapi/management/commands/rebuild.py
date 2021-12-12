@@ -25,8 +25,9 @@ class Command(BaseCommand):
         f = io.StringIO()
         writer = csv.writer(f, delimiter=",")
         writer.writerows(rows)
+        f.seek(0)
 
-        df = pd.read_csv('temp_file.csv')
+        df = pd.read_csv(f)
         return df
 
 
