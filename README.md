@@ -1,7 +1,7 @@
 
 # django-restful-uk-weather
 
-[![CircleCI](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master.svg?style=svg)](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master)
+[![CircleCI](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master.svg?style=svg&circle-token=eb3d4f6dbe8d27bc69fc55786c68db3d07258a27)](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master)
 
 
 A django restful app that presents weather data for UK from 1910 - 2017
@@ -26,19 +26,8 @@ Steps to run the application
 
 4. Populate the database by typing `pip manage.py rebuild`
 
-  
 
-5. Make a dev.env file and put in the following values according to your use cases:
-```
-DB_NAME=your_db_name
-DB_HOST=your_db_host
-DB_USERNAME=your_db_username
-DB_PASSWORD=your_db_password
-DB_PORT=your_db_port
-TEST_DB_NAME=your_test_db_name
-```
-
-6. Make a GET request to `/weather-report` using any of the following query parameters: <br>
+5. Make a GET request to `/weather-report` using any of the following query parameters: <br>
 
   
 
@@ -50,4 +39,4 @@ TEST_DB_NAME=your_test_db_name
 
 	d. `location`: Any of the currently available locations [UK, Scotland, Wales, England]<br>
 
-7. Tests can be run with `python manage.py test`
+6. Tests can be run with `python manage.py test`
