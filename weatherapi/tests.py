@@ -5,82 +5,78 @@ from django.test.utils import override_settings
 
 # Create your tests here.
 
-def test_sample():
-    assert 1 == 1
+@override_settings(DEBUG=True)
+class WeatherTestCase(TestCase):
 
+    fixtures = ['db_data']
 
-# @override_settings(DEBUG=True)
-# class WeatherTestCase(LiveServerTestCase):
+    def test_get_weather(self):
+        """
+        This test determines if the GET requests are working properly.
+        """
 
-#     fixtures = ['db_data']
+        client = RequestsClient()
+        response = client.get(
+            'http://localhost:8000/weather-report',
+            params={
+                'start_date': '2001-01-01',
+                'end_date': '2010-01-01',
+                'metric': 'Rainfall',
+                'location': 'UK'
+            }
+        )
+        assert response.status_code == 200
 
-#     def test_get_weather(self):
-#         """
-#         This test determines if the GET requests are working properly.
-#         """
+        #  Test for delivering the weather data
 
-#         client = RequestsClient()
-#         response = client.get(
-#             'http://localhost:8000/weather-report',
-#             params={
-#                 'start_date': '2001-01-01',
-#                 'end_date': '2010-01-01',
-#                 'metric': 'Rainfall',
-#                 'location': 'UK'
-#             }
-#         )
-#         assert response.status_code == 200
+        assert response.json()[0] == {"2001-01": 79.4}
+        assert response.json()[1] == {"2001-02": 97.1}
+        assert response.json()[2] == {"2001-03": 85.7}
 
-#         #  Test for delivering the weather data
+    def test_check_duplicate_data(self):
+        """
+        This test determines if there are any duplicate values in the
+        data.
+        """
 
-#         assert response.json()[0] == {"2001-01": 79.4}
-#         assert response.json()[1] == {"2001-02": 97.1}
-#         assert response.json()[2] == {"2001-03": 85.7}
+        client = RequestsClient()
+        response = client.get(
+            'http://localhost:8000/weather-report',
+            params={
+                'start_date': '2001-01-01',
+                'end_date': '2010-01-01',
+                'metric': 'Rainfall',
+                'location': 'Scotland'
+            }
+        )
+        assert response.status_code == 200
 
-#     def test_check_duplicate_data(self):
-#         """
-#         This test determines if there are any duplicate values in the
-#         data.
-#         """
+        #  Test for checking for duplicate values
 
-#         client = RequestsClient()
-#         response = client.get(
-#             'http://localhost:8000/weather-report',
-#             params={
-#                 'start_date': '2001-01-01',
-#                 'end_date': '2010-01-01',
-#                 'metric': 'Rainfall',
-#                 'location': 'Scotland'
-#             }
-#         )
-#         assert response.status_code == 200
+        test_object_list = []  # List to count the result
+        for result in response.json():
 
-#         #  Test for checking for duplicate values
+            if result == {"2001-01": 91.6}:
+                test_object_list.append(result)
 
-#         test_object_list = []  # List to count the result
-#         for result in response.json():
+        assert len(test_object_list) == 1
 
-#             if result == {"2001-01": 91.6}:
-#                 test_object_list.append(result)
+        response = client.get(
+            'http://localhost:8000/weather-report',
+            params={
+                'start_date': '2001-01-01',
+                'end_date': '2010-01-01',
+                'metric': 'Tmax',
+                'location': 'UK'
+            }
+        )
+        assert response.status_code == 200
 
-#         assert len(test_object_list) == 1
+        #  Test for checking duplicate values
 
-#         response = client.get(
-#             'http://localhost:8000/weather-report',
-#             params={
-#                 'start_date': '2001-01-01',
-#                 'end_date': '2010-01-01',
-#                 'metric': 'Tmax',
-#                 'location': 'UK'
-#             }
-#         )
-#         assert response.status_code == 200
+        test_object_list = []  # List to count the result
+        for result in response.json():
+            if result == {"2001-01": 5.3}:
+                test_object_list.append(result)
 
-#         #  Test for checking duplicate values
-
-#         test_object_list = []  # List to count the result
-#         for result in response.json():
-#             if result == {"2001-01": 5.3}:
-#                 test_object_list.append(result)
-
-#         assert len(test_object_list) == 1
+        assert len(test_object_list) == 1

@@ -105,17 +105,24 @@ CONFIG = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': CONFIG['db_name'],
-        'USER': CONFIG['db_username'],
-        'PASSWORD': CONFIG['db_password'],
-        'HOST': CONFIG['db_host'],
-        'PORT': CONFIG['db_port'],
-        'TEST': {
-           'NAME': CONFIG['test_db_name'],
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+if os.environ.get('PROD'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': CONFIG['db_name'],
+            'USER': CONFIG['db_username'],
+            'PASSWORD': CONFIG['db_password'],
+            'HOST': CONFIG['db_host'],
+            'PORT': CONFIG['db_port'],
+            'TEST': {
+                'NAME': CONFIG['test_db_name'],
+            }
+        }
+    }
 
 
 # Password validation
