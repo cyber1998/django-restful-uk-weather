@@ -4,7 +4,7 @@
 [![CircleCI](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master.svg?style=svg&circle-token=eb3d4f6dbe8d27bc69fc55786c68db3d07258a27)](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master)
 
 
-A django restful app that presents weather data for UK from 1910 - 2017
+A django restful app that presents weather data for UK from 1894 - 2021
 
   
 
