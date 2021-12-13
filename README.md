@@ -1,6 +1,9 @@
 
 # django-restful-uk-weather
 
+[![CircleCI](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master.svg?style=svg)](https://circleci.com/gh/cyber1998/django-restful-uk-weather/tree/master)
+
+
 A django restful app that presents weather data for UK from 1910 - 2017
 
   
