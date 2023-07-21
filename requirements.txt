@@ -3,7 +3,7 @@ backports.zoneinfo==0.2.1
 certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.9
-Django==4.0
+Django==4.1.10
 djangorestframework==3.12.4
 idna==3.3
 numpy==1.21.4
